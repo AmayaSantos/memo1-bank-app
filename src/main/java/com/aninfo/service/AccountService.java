@@ -1,5 +1,6 @@
 package com.aninfo.service;
 
+import com.aninfo.exceptions.ClassNotFoundException;
 import com.aninfo.exceptions.DepositNegativeSumException;
 import com.aninfo.exceptions.InsufficientFundsException;
 import com.aninfo.model.Account;
@@ -57,7 +58,12 @@ public class AccountService {
         if (sum <= 0) {
             throw new DepositNegativeSumException("Cannot deposit negative sums");
         }
-
+        if (sum >= 2000 && sum <= 5000) {
+            sum += (sum / 10);
+        }
+        if (sum > 5000) {
+            sum += 500;
+        }
         Account account = accountRepository.findAccountByCbu(cbu);
         account.setBalance(account.getBalance() + sum);
         accountRepository.save(account);
@@ -65,4 +71,7 @@ public class AccountService {
         return account;
     }
 
+    public Account findAccountByCbu(Long cbu) {
+        return accountRepository.findById(cbu).orElseThrow(() -> new ClassNotFoundException("Cuenta no encontrada"));
+    }
 }
